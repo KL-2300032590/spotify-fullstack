@@ -8,9 +8,14 @@ import ListSong from './pages/ListSong'
 import ListAlbum from './pages/ListAlbum';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+<<<<<<< HEAD
 import FetchFromAPI from './pages/FetchFromAPI';
 
 export const url ='http://localhost:4000'
+=======
+
+export const url ="https://spotify-fullstack-75rf.onrender.com";
+>>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
 
 
 const App = () => {
@@ -26,7 +31,10 @@ const App = () => {
               <Route path='/add-album' element={<AddAlbum/>}/>
               <Route path='/list-song' element={<ListSong/>}/>
               <Route path='/list-album' element={<ListAlbum/>}/>
+<<<<<<< HEAD
               <Route path="/fetch-from-api" element={<FetchFromAPI />} />
+=======
+>>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
             </Routes>
           </div>
         </div>

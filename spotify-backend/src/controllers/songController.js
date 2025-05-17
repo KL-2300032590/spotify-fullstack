@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+<<<<<<< HEAD
 import songModel from '../models/songModel.js';
 import fetch from 'node-fetch'; // Ensure this is installed via npm
 
@@ -103,3 +104,72 @@ const addSongFromAPI = async (req, res) => {
 };
 
 export { addSong, listSong, removeSong, addSongFromAPI };
+=======
+import songModel from '../models/songModel.js'
+
+
+const addSong = async (req,res)=>{
+    try {
+        
+        const name = req.body.name;
+        const desc = req.body.desc;
+        const album = req.body.album;
+        const audioFile = req.files.audio[0];
+        const imageFile = req.files.image[0];
+        const audioUpload = await cloudinary.uploader.upload(audioFile.path, {resource_type: "video"});
+        const imageUpload = await cloudinary.uploader.upload(imageFile.path, {resource_type: "image"});
+        const duration = `${Math.floor(audioUpload.duration / 60)}:${Math.floor(audioUpload.duration % 60)}`
+
+        
+        
+        
+        const songData ={
+            name,
+            desc,
+            album,
+            image : imageUpload.secure_url,
+            file : audioUpload.secure_url,
+            duration,
+        }
+
+        const song = songModel(songData);
+        await song.save();
+
+        res.json({success : true,message:"song Added"});
+
+
+    } catch (error) {
+      
+        res.json({success:false});
+
+    }
+ 
+
+}
+
+
+const listSong = async(req,res)=>{
+   try {
+
+    const allSongs = await songModel.find({});
+    res.json({success:true ,  songs:allSongs});
+    
+   } catch (error) {
+     
+       res.json({success:false});
+   }
+
+}
+
+const removeSong = async(req,res)=>{
+    try {
+        await songModel.findByIdAndDelete(req.body.id);
+        res.json({success:true,message:"Song removed"});
+        
+    } catch (error) {
+        res.json({success:true,message:"Song not removed"});
+    }
+}
+
+export {addSong , listSong, removeSong}
+>>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a

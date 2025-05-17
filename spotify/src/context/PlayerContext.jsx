@@ -8,7 +8,11 @@ const PlayerContextProvider = (props) => {
     const seekBg = useRef();
     const seekBar = useRef();
 
+<<<<<<< HEAD
     const url = 'http://localhost:4000';
+=======
+    const url = "https://spotify-fullstack-75rf.onrender.com";
+>>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
     const [songsData, setSongsData] = useState([]);
     const [albumsData, setAlbumsData] = useState([]);
 
@@ -43,11 +47,14 @@ const PlayerContextProvider = (props) => {
             }
         }
     }
+<<<<<<< HEAD
     const playTrack = (song) => {
         setTrack(song);
         SetPlayStatus(true);
     };
     
+=======
+>>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
 
     const previous = async () => {
         const currentIndex = songsData.findIndex(item => item._id === track._id);
@@ -152,7 +159,10 @@ const PlayerContextProvider = (props) => {
         time, SetTime,
         play, pause,
         playWithId,
+<<<<<<< HEAD
         playTrack,
+=======
+>>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
         previous,
         next,
         seekSong,
@@ -168,4 +178,8 @@ const PlayerContextProvider = (props) => {
 }
 
 export { PlayerContext };
+<<<<<<< HEAD
 export default PlayerContextProvider;
+=======
+export default PlayerContextProvider;
+>>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
