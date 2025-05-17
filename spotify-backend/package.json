@@ -12,21 +12,15 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-<<<<<<< HEAD
     "axios": "^1.8.4",
-=======
->>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.12.1",
     "multer": "^1.4.5-lts.1",
-<<<<<<< HEAD
     "natural": "^8.0.1",
     "node-fetch": "^3.3.2",
-=======
->>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
     "nodemon": "^3.1.9"
   }
 }

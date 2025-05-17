@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
 import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
@@ -9,12 +6,10 @@ import songRouter from './src/routes/songRoute.js';
 import connectDB from './src/config/mongodb.js';
 import connectCloudinary from './src/config/cloudinary.js';
 import albumRouter from './src/routes/albumRoute.js';
-<<<<<<< HEAD
+
 import recommendRouter from './src/routes/recommendRoute.js';
 import apiFetchRoute from './src/routes/apiFetchRoute.js';
 
-=======
->>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
 
 // app config
 const app = express();
@@ -32,15 +27,13 @@ app.use(cors()); //allow fronted to connect with backend
 app.use("/api/song",songRouter);
 app.use("/api/album",albumRouter);
 
-<<<<<<< HEAD
+
 //recommandation
  
 app.use("/api/recommend",recommendRouter);
 app.use('/api', apiFetchRoute);
 
 
-=======
->>>>>>> 1333d4642bea10e67118ad2c7e55d822be6fde0a
 app.get('/', (req,res)=> res.send("API WORKING"))
 
 app.listen(port , ()=>console.log(`Server Started on ${port}`));
