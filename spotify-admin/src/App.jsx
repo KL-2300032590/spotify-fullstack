@@ -8,6 +8,7 @@ import ListSong from './pages/ListSong'
 import ListAlbum from './pages/ListAlbum';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+import FetchFromAPI from './pages/FetchFromAPI';
 
 export const url ='http://localhost:4000'
 
@@ -25,6 +26,7 @@ const App = () => {
               <Route path='/add-album' element={<AddAlbum/>}/>
               <Route path='/list-song' element={<ListSong/>}/>
               <Route path='/list-album' element={<ListAlbum/>}/>
+              <Route path="/fetch-from-api" element={<FetchFromAPI />} />
             </Routes>
           </div>
         </div>

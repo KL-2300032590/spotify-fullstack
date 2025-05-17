@@ -43,6 +43,11 @@ const PlayerContextProvider = (props) => {
             }
         }
     }
+    const playTrack = (song) => {
+        setTrack(song);
+        SetPlayStatus(true);
+    };
+    
 
     const previous = async () => {
         const currentIndex = songsData.findIndex(item => item._id === track._id);
@@ -147,6 +152,7 @@ const PlayerContextProvider = (props) => {
         time, SetTime,
         play, pause,
         playWithId,
+        playTrack,
         previous,
         next,
         seekSong,

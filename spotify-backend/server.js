@@ -5,6 +5,9 @@ import songRouter from './src/routes/songRoute.js';
 import connectDB from './src/config/mongodb.js';
 import connectCloudinary from './src/config/cloudinary.js';
 import albumRouter from './src/routes/albumRoute.js';
+import recommendRouter from './src/routes/recommendRoute.js';
+import apiFetchRoute from './src/routes/apiFetchRoute.js';
+
 
 // app config
 const app = express();
@@ -21,6 +24,12 @@ app.use(cors()); //allow fronted to connect with backend
 //initilazing routes
 app.use("/api/song",songRouter);
 app.use("/api/album",albumRouter);
+
+//recommandation
+ 
+app.use("/api/recommend",recommendRouter);
+app.use('/api', apiFetchRoute);
+
 
 app.get('/', (req,res)=> res.send("API WORKING"))
 
