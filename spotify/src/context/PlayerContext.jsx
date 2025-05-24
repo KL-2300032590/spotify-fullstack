@@ -21,7 +21,7 @@ const PlayerContextProvider = (props) => {
 
     const play = () => {
         if (audioRef.current) {
-            audioRef.current.play();
+            audioRef.current.play().catch(err => console.error("Playback failed:", err));
             SetPlayStatus(true);
         }
     }
@@ -33,49 +33,53 @@ const PlayerContextProvider = (props) => {
         }
     }
 
-    const playWithId = async (id) => {
+    const playWithId = (id) => {
         const song = songsData.find(item => item._id === id);
+        console.log("playWithId called with song:", song);
+        console.log(id);
         if (song) {
-            await setTrack(song);
             if (audioRef.current) {
-                await audioRef.current.play();
-                SetPlayStatus(true);
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
             }
+            setTrack(song);
+            // DO NOT set play status here; wait for canplay event
         }
     }
 
     const playTrack = (song) => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
         setTrack(song);
-        SetPlayStatus(true);
+        // Play status will be handled in effect
     };
 
-    const previous = async () => {
+    const previous = () => {
+        if (!track) return;
         const currentIndex = songsData.findIndex(item => item._id === track._id);
         if (currentIndex > 0) {
-            await setTrack(songsData[currentIndex - 1]);
-            if (audioRef.current) {
-                await audioRef.current.play();
-                SetPlayStatus(true);
-            }
+            setTrack(songsData[currentIndex - 1]);
+            // Play status handled in useEffect
         }
     }
 
-    const next = async () => {
+    const next = () => {
+        if (!track) return;
         const currentIndex = songsData.findIndex(item => item._id === track._id);
         if (currentIndex < songsData.length - 1) {
-            await setTrack(songsData[currentIndex + 1]);
-            if (audioRef.current) {
-                await audioRef.current.play();
-                SetPlayStatus(true);
-            }
+            setTrack(songsData[currentIndex + 1]);
+            // Play status handled in useEffect
         } else {
             SetPlayStatus(false);
         }
     }
 
-    const seekSong = async (e) => {
+    const seekSong = (e) => {
         if (audioRef.current && seekBg.current) {
-            audioRef.current.currentTime = ((e.nativeEvent.offsetX / seekBg.current.offsetWidth) * audioRef.current.duration);
+            const newTime = (e.nativeEvent.offsetX / seekBg.current.offsetWidth) * audioRef.current.duration;
+            audioRef.current.currentTime = newTime;
         }
     }
 
@@ -106,7 +110,7 @@ const PlayerContextProvider = (props) => {
         const interval = setInterval(() => {
             if (audioRef.current && seekBar.current) {
                 audioRef.current.ontimeupdate = () => {
-                    seekBar.current.style.width = (Math.floor(audioRef.current.currentTime / audioRef.current.duration * 100)) + "%";
+                    seekBar.current.style.width = `${Math.floor(audioRef.current.currentTime / audioRef.current.duration * 100)}%`;
                     SetTime({
                         currentTime: {
                             second: Math.floor(audioRef.current.currentTime % 60),
@@ -121,7 +125,7 @@ const PlayerContextProvider = (props) => {
             }
         }, 1000);
         return () => clearInterval(interval);
-    }, [audioRef, seekBar]);
+    }, []);
 
     useEffect(() => {
         getSongsData();
@@ -132,13 +136,32 @@ const PlayerContextProvider = (props) => {
         if (audioRef.current) {
             audioRef.current.onended = next;
         }
-    }, [audioRef, next]);
+    }, [track]);
 
     useEffect(() => {
         if (track && audioRef.current) {
-            audioRef.current.src = track.file;
-            audioRef.current.play();
-            SetPlayStatus(true);
+            const audio = audioRef.current;
+            console.log("Track changed to:", track.name, "with file:", track.file);
+
+            audio.pause();
+            audio.currentTime = 0;
+            audio.src = track.file;
+
+            const handleCanPlay = () => {
+                audio.play().catch(err => {
+                    console.error("Playback failed:", err);
+                    SetPlayStatus(false);
+                });
+                SetPlayStatus(true);
+                audio.removeEventListener('canplaythrough', handleCanPlay);
+            };
+
+            audio.addEventListener('canplaythrough', handleCanPlay);
+            audio.load();
+
+            return () => {
+                audio.removeEventListener('canplaythrough', handleCanPlay);
+            };
         }
     }, [track]);
 

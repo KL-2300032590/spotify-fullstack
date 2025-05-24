@@ -1,190 +1,255 @@
-import React, { useEffect, useState } from 'react';
-import { assets } from '../assets/assets';
+// src/components/AddSong.js
+
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { url } from '../App';
 import { toast } from 'react-toastify';
 import * as mm from 'music-metadata-browser';
+import { assets } from '../assets/assets';
+import { url } from '../App';
 import FetchFromAPI from './FetchFromAPI';
 
+const formatDuration = (seconds) => {
+  if (!seconds || isNaN(seconds)) return '';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+};
+
 const AddSong = () => {
-  const [image, setImage] = useState(false);
-  const [song, setSong] = useState(false);
+  const [image, setImage] = useState(null);
+  const [song, setSong] = useState(null);
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [album, setAlbum] = useState('none');
   const [duration, setDuration] = useState('');
   const [loading, setLoading] = useState(false);
   const [albumData, setAlbumData] = useState([]);
+  const imageObjectUrlRef = useRef(null);
 
-  // Function to handle data from FetchFromAPI component
+  useEffect(() => {
+    return () => {
+      if (imageObjectUrlRef.current) {
+        URL.revokeObjectURL(imageObjectUrlRef.current);
+      }
+    };
+  }, [image]);
+
+  useEffect(() => {
+    const fetchAlbums = async () => {
+      try {
+        const res = await axios.get(`${url}/api/album/list`);
+        if (res.data.success) {
+          setAlbumData(res.data.albums);
+        } else {
+          toast.error('Failed to load albums');
+        }
+      } catch {
+        toast.error('Error loading albums');
+      }
+    };
+    fetchAlbums();
+  }, []);
+
   const setSongData = (data) => {
     if (data.name) setName(data.name);
     if (data.artist || data.album) {
-      setDesc(`By ${data.artist}${data.album ? ' — ' + data.album : ''}`);
+      setDesc(`By ${data.artist || ''}${data.album ? ' — ' + data.album : ''}`);
     }
-    if (data.album) setAlbum(data.album);
     if (data.image) {
-      fetch(data.image)
-        .then(res => res.blob())
-        .then(blob => setImage(new File([blob], "cover.jpg", { type: blob.type })))
-        .catch(err => toast.error("Image fetch failed"));
+      setImage(data.image);
+      if (imageObjectUrlRef.current) {
+        URL.revokeObjectURL(imageObjectUrlRef.current);
+      }
+      imageObjectUrlRef.current = URL.createObjectURL(data.image);
     }
-    if (data.duration) setDuration(data.duration);
-  };
-
-  const onSubmitHandler = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('desc', desc);
-      formData.append('duration', duration);
-      formData.append('image', image);
-      formData.append('audio', song);
-      formData.append('album', album);
-
-      const response = await axios.post(`${url}/api/song/add`, formData);
-
-      if (response.data.success) {
-        toast.success('Song added!');
-        setName('');
-        setDesc('');
+    if (data.duration) {
+      setDuration(formatDuration(data.duration));
+    }
+    if (data.album) {
+      const match = albumData.find(
+        (a) => a.name.toLowerCase().trim() === data.album.toLowerCase().trim()
+      );
+      if (match) {
+        setAlbum(match.name);
+      } else {
         setAlbum('none');
-        setImage(false);
-        setSong(false);
-        setDuration('');
-      } else {
-        toast.error('Something went wrong');
+        toast.info(`Album "${data.album}" not found. Please select manually.`);
       }
-    } catch (error) {
-      toast.error('Failed to connect to server');
     }
-    setLoading(false);
-  };
-
-  const loadAlbumData = async () => {
-    try {
-      const response = await axios.get(`${url}/api/album/list`);
-      if (response.data.success) {
-        setAlbumData(response.data.albums);
-      } else {
-        toast.error('Unable to load album data');
-      }
-    } catch (error) {
-      toast.error('Error loading albums');
+    if (data.audio) {
+      setSong(data.audio);
     }
   };
-
-  useEffect(() => {
-    loadAlbumData();
-  }, []);
 
   const handleSongUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setSong(file);
-
     try {
       const metadata = await mm.parseBlob(file);
-      const dur = metadata.format.duration;
+      const durSeconds = metadata.format.duration;
       const title = metadata.common.title || file.name.replace(/\.[^/.]+$/, '');
-
-      if (dur) setDuration(dur.toFixed(2));
+      if (durSeconds) setDuration(formatDuration(durSeconds));
       if (!name) setName(title);
-    } catch (error) {
-      console.error('Metadata error:', error);
-      toast.warn('Could not read song metadata');
+    } catch {
+      toast.warn('Unable to read audio metadata');
     }
   };
 
-  return loading ? (
-    <div className='grid place-items-center min-h-[80vh]'>
-      <div className='w-16 h-16 place-self-center border-4 border-gray-400 border-t-green-800 rounded-full animate-spin'></div>
-    </div>
-  ) : (
-    <form onSubmit={onSubmitHandler} className='flex flex-col items-start gap-8 text-gray-600'>
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImage(file);
+    if (imageObjectUrlRef.current) {
+      URL.revokeObjectURL(imageObjectUrlRef.current);
+    }
+    imageObjectUrlRef.current = URL.createObjectURL(file);
+  };
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    if (!song) return toast.warn('Please upload a song file');
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('name', name.trim());
+      formData.append('desc', desc.trim());
+      formData.append('duration', duration);
+      formData.append('image', image || '');
+      formData.append('audio', song);
+      formData.append('album', album);
+
+      const res = await axios.post(`${url}/api/song/add`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (res.data.success) {
+        toast.success('Song added successfully!');
+        setName('');
+        setDesc('');
+        setAlbum('none');
+        setImage(null);
+        setSong(null);
+        setDuration('');
+        if (imageObjectUrlRef.current) {
+          URL.revokeObjectURL(imageObjectUrlRef.current);
+          imageObjectUrlRef.current = null;
+        }
+      } else {
+        toast.error('Failed to add song');
+      }
+    } catch {
+      toast.error('Server error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="grid place-items-center min-h-[80vh]">
+        <div className="w-16 h-16 border-4 border-gray-400 border-t-green-800 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={onSubmitHandler}
+      className="flex flex-col items-start gap-8 text-gray-600"
+      encType="multipart/form-data"
+    >
       <FetchFromAPI setSongData={setSongData} />
 
-      <div className='flex gap-8'>
-        <div className='flex flex-col gap-4'>
-          <p>Upload</p>
-          <input onChange={handleSongUpload} type='file' id='song' accept='audio/*' hidden />
-          <label htmlFor='song'>
-            <img src={song ? assets.upload_added : assets.upload_song} className='w-24 cursor-pointer' alt='' />
+      <div className="flex gap-8">
+        <div className="flex flex-col gap-4">
+          <p>Upload Song</p>
+          <input type="file" id="song" accept="audio/*" hidden onChange={handleSongUpload} />
+          <label htmlFor="song" className="cursor-pointer">
+            <img
+              src={song ? assets.upload_added : assets.upload_song}
+              alt="Upload Song"
+              className="w-24"
+            />
           </label>
         </div>
-        <div className='flex flex-col gap-4'>
+
+        <div className="flex flex-col gap-4">
           <p>Upload Image</p>
-          <input onChange={(e) => setImage(e.target.files[0])} type='file' id='image' accept='image/*' hidden />
-          <label htmlFor='image'>
+          <input type="file" id="image" accept="image/*" hidden onChange={handleImageUpload} />
+          <label htmlFor="image" className="cursor-pointer">
             <img
-              src={image ? URL.createObjectURL(image) : assets.upload_area}
-              className='cursor-pointer w-24'
-              alt=''
+              src={image ? imageObjectUrlRef.current : assets.upload_area}
+              alt="Upload Cover"
+              className="w-24"
             />
           </label>
         </div>
       </div>
 
-      <div className='flex flex-col gap-2.5'>
+      <div className="flex flex-col gap-2.5">
         <p>Song name</p>
         <input
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-          className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[max(40vw,250px)]'
-          placeholder='Type Here'
-          type='text'
+          type="text"
+          maxLength={100}
           required
+          placeholder="Type Here"
+          className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[min(600px,90vw)]"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
       </div>
 
-      <div className='flex flex-col gap-2.5'>
+      <div className="flex flex-col gap-2.5">
         <p>Song description</p>
         <input
-          onChange={(e) => setDesc(e.target.value)}
-          value={desc}
-          className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[max(40vw,250px)]'
-          placeholder='Type Here'
-          type='text'
+          type="text"
+          maxLength={150}
           required
+          placeholder="Type Here"
+          className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[min(600px,90vw)]"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
         />
       </div>
 
-      {duration && (
-        <div className='flex flex-col gap-2.5'>
-          <p>Duration</p>
-          <input
-            value={duration + ' sec'}
-            readOnly
-            className='bg-transparent outline-green-600 border-gray-400 border-2 p-2.5 w-[max(40vw,250px)] text-gray-700'
-          />
-        </div>
-      )}
+      <div className="flex flex-col gap-2.5">
+        <p>Song duration</p>
+        <input
+          type="text"
+          readOnly
+          placeholder="00:00"
+          className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[min(600px,90vw)]"
+          value={duration}
+        />
+      </div>
 
-      <div className='flex flex-col gap-2.5'>
-        <p>Album</p>
+      <div className="flex flex-col gap-2.5">
+        <p>Choose Album</p>
         <select
+          className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[min(600px,90vw)]"
           onChange={(e) => setAlbum(e.target.value)}
           value={album}
-          className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[max(40vw,250px)]'
           required
         >
-          <option value='none'>None</option>
-          {albumData.map((album) => (
-            <option key={album._id} value={album.name}>
-              {album.name}
+          <option value="none" disabled>
+            Select Album
+          </option>
+          {albumData.map((a) => (
+            <option key={a._id} value={a.name}>
+              {a.name}
             </option>
           ))}
         </select>
       </div>
 
       <button
-        type='submit'
-        className='bg-green-600 text-white px-8 py-2.5 rounded-full hover:bg-green-700 transition-colors'
+        type="submit"
+        className="bg-green-600 text-white px-6 py-2 rounded disabled:opacity-50"
+        disabled={!song || !name || album === 'none' || loading}
       >
-        Add Song
+        Upload Song
       </button>
     </form>
   );
