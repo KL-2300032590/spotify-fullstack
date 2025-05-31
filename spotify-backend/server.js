@@ -1,4 +1,3 @@
-
 import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
@@ -6,9 +5,18 @@ import songRouter from './src/routes/songRoute.js';
 import connectDB from './src/config/mongodb.js';
 import connectCloudinary from './src/config/cloudinary.js';
 import albumRouter from './src/routes/albumRoute.js';
-
+import videoRouter from './src/routes/videoRoute.js';
 import recommendRouter from './src/routes/recommendRoute.js';
 import apiFetchRoute from './src/routes/apiFetchRoute.js';
+import videoAlbumRouter from './src/routes/videoAlbumRoute.js';
+import paymentRoutes from './src/routes/paymentRoutes.js';
+import authRoutes from './src/routes/authRoutes.js';
+import offlineRoutes from './src/routes/offlineRoutes.js';
+import visualizerRoutes from './src/routes/visualizerRoutes.js';
+
+
+
+
 
 
 // app config
@@ -32,6 +40,25 @@ app.use("/api/album",albumRouter);
  
 app.use("/api/recommend",recommendRouter);
 app.use('/api', apiFetchRoute);
+
+//video
+
+app.use('/api/video-album',videoAlbumRouter);
+app.use('/api/video', videoRouter);
+
+
+// Payment
+app.use('/api/payment', paymentRoutes); 
+
+
+//auth
+app.use('/api/auth', authRoutes); 
+
+
+
+//premium
+app.use('/api/offline', offlineRoutes);
+app.use('/api/visualizer', visualizerRoutes);
 
 
 app.get('/', (req,res)=> res.send("API WORKING"))

@@ -9,7 +9,7 @@ const RecommendedSongs = ({ currentSongId }) => {
   useEffect(() => {
     if (currentSongId) {
       axios
-        .get(`https://spotify-backend1.onrender.com/api/recommend/${currentSongId}`)
+        .get(`http://localhost:4000/api/recommend/${currentSongId}`)
         .then(res => setRecommended(res.data))
         .catch(err => console.error('Recommendation error:', err));
     }
@@ -20,22 +20,27 @@ const RecommendedSongs = ({ currentSongId }) => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Recommended Songs</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
+    <div className="p-6 bg-gray-900 rounded-lg shadow-lg max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold mb-6 text-white border-b border-gray-700 pb-2">
+        Recommended Songs
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {recommended.map((song) => (
           <div
             key={song._id}
-            className="cursor-pointer hover:bg-gray-800 p-2 rounded"
             onClick={() => handlePlay(song._id)}
+            className="flex items-center gap-4 cursor-pointer bg-gray-800 rounded-lg p-4 hover:bg-green-600 transition duration-300"
+            title={`Play ${song.name}`}
           >
             <img
               src={song.image}
               alt={song.name}
-              className="w-full h-32 object-cover rounded mb-2"
+              className="w-20 h-20 rounded-md object-cover flex-shrink-0"
             />
-            <p className="text-white font-semibold text-sm truncate">{song.name}</p>
-            <p className="text-gray-400 text-xs truncate">{song.album}</p>
+            <div className="flex flex-col overflow-hidden">
+              <p className="text-white font-semibold text-lg truncate">{song.name}</p>
+              <p className="text-gray-300 text-sm truncate">{song.album}</p>
+            </div>
           </div>
         ))}
       </div>

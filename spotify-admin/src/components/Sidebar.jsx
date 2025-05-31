@@ -1,6 +1,7 @@
 import React from 'react'
 import {assets} from'../assets/assets'
 import { NavLink } from 'react-router-dom'
+
 const Sidebar = () => {
   return (
     <div className='bg-[#003A10] min-h-screen pl-[4vw]'>
@@ -33,6 +34,15 @@ const Sidebar = () => {
         <NavLink to='/fetch-from-api'  className='flex items-center gap-2.5 text-gray-800 bg-white border border-black p-2 pr-[max(8vw,10px)] drop-shadow-[-4px_4px_#00FF5B] text-sm font-medium'>
             <img src={assets.album_icon} className='w-5' alt=''/>
             <p className='hidden sm:block cursor-pointer'>Fetch From API</p>
+        </NavLink>
+
+        <NavLink to='/add-album-video'  className='flex items-center gap-2.5 text-gray-800 bg-white border border-black p-2 pr-[max(8vw,10px)] drop-shadow-[-4px_4px_#00FF5B] text-sm font-medium'>
+            <img src={assets.upload_song} className='w-5' alt=''/>
+            <p className='hidden sm:block cursor-pointer'>Add Video Album</p>
+        </NavLink>
+        <NavLink to='/add-video'  className='flex items-center gap-2.5 text-gray-800 bg-white border border-black p-2 pr-[max(8vw,10px)] drop-shadow-[-4px_4px_#00FF5B] text-sm font-medium'>
+            <img src={assets.song_icon} className='w-5' alt=''/>
+            <p className='hidden sm:block cursor-pointer'>Add Video </p>
         </NavLink>
 
       </div>

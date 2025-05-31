@@ -8,7 +8,7 @@ const PlayerContextProvider = (props) => {
     const seekBg = useRef();
     const seekBar = useRef();
 
-    const url = 'https://spotify-backend1.onrender.com';
+    const url = 'http://localhost:4000';
     const [songsData, setSongsData] = useState([]);
     const [albumsData, setAlbumsData] = useState([]);
 
@@ -35,8 +35,6 @@ const PlayerContextProvider = (props) => {
 
     const playWithId = (id) => {
         const song = songsData.find(item => item._id === id);
-        console.log("playWithId called with song:", song);
-        console.log(id);
         if (song) {
             if (audioRef.current) {
                 audioRef.current.pause();
@@ -90,7 +88,7 @@ const PlayerContextProvider = (props) => {
             if (response.data.songs.length > 0) {
                 setTrack(response.data.songs[0]);
             }
-            console.log("Fetched songs data:", response.data.songs);
+           // console.log("Fetched songs data:", response.data.songs);
         } catch (error) {
             console.error("Error fetching songs:", error);
         }
@@ -100,7 +98,7 @@ const PlayerContextProvider = (props) => {
         try {
             const response = await axios.get(`${url}/api/album/list`);
             setAlbumsData(response.data.albums);
-            console.log("Fetched albums data:", response.data.albums);
+           // console.log("Fetched albums data:", response.data.albums);
         } catch (error) {
             console.error("Error fetching albums:", error);
         }
@@ -141,7 +139,7 @@ const PlayerContextProvider = (props) => {
     useEffect(() => {
         if (track && audioRef.current) {
             const audio = audioRef.current;
-            console.log("Track changed to:", track.name, "with file:", track.file);
+          //  console.log("Track changed to:", track.name, "with file:", track.file);
 
             audio.pause();
             audio.currentTime = 0;
