@@ -6,7 +6,7 @@ const DownloadLibrary = () => {
 
   const fetchSongs = async () => {
     try {
-      const res = await axios.get('http://localhost:4000/api/song/list'); // Adjust if your API path differs
+      const res = await axios.get('https://antara-b.onrender.com/api/song/list'); // Adjust if your API path differs
       setSongs(res.data || []);
     } catch (err) {
       console.error('Error fetching songs', err);
@@ -17,7 +17,7 @@ const DownloadLibrary = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:4000/api/offline/save',
+        'https://antara-b.onrender.com/api/offline/save',
         { songId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
