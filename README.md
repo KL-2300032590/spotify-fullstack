@@ -10,12 +10,12 @@ The word **Antara** comes from Indian classical music, symbolizing *depth* and *
 
 ---
 
-## 🔑 Demo Credentials
+## 🔑✨ For Premium Access
 
-To explore **Premium User Features**, use the credentials below:
+To explore for FREE **Premium User Features**, send an msg to my email below:
 
-- **Email**: `premiumUser@gmail.com`
-- **Password**: `User!123`
+- **Email**: `devpersonal.testing@gmail.com`
+
 
 > ✨ Premium users can access offline mode, visualizer themes, LLM playlists, video albums, and more!
 
