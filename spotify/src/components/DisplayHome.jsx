@@ -6,8 +6,7 @@ import { PlayerContext } from '../context/PlayerContext';
 import RecommendedSongs from './RecommendedSongs';
 
 const DisplayHome = () => {
-  const { songsData, albumsData, track } = useContext(PlayerContext); // ✅ FIXED: Added 'track'
-
+  const { songsData, albumsData, track } = useContext(PlayerContext); 
   return (
     <>
       <Navbar />
