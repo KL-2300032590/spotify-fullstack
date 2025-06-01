@@ -13,7 +13,7 @@ const VideoUpload = ({ onSuccess }) => {
 
   // Fetch albums from backend
   useEffect(() => {
-    axios.get('http://localhost:4000/api/video-album')
+    axios.get('https://antara-b.onrender.com/api/video-album')
       .then((res) => setAlbums(res.data))
       .catch((err) => {
         console.error('Error loading albums:', err);
@@ -37,7 +37,7 @@ const VideoUpload = ({ onSuccess }) => {
       formData.append('albumId', albumId);
       formData.append('video', videoFile);
 
-      const res = await axios.post('http://localhost:4000/api/video/upload', formData, {
+      const res = await axios.post('https://antara-b.onrender.com/api/video/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
