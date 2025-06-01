@@ -13,7 +13,7 @@ const Visualizer = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/visualizer/settings', {
+        const res = await axios.get('https://antara-b.onrender.com/api/visualizer/settings', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         setSettings(res.data);
