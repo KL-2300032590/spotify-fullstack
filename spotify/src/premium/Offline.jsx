@@ -11,7 +11,7 @@ const Offline = () => {
   const fetchDownloads = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:4000/api/offline/list', {
+      const res = await axios.get('https://antara-b.onrender.com/api/offline/list', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
