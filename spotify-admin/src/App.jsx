@@ -12,6 +12,7 @@ import FetchFromAPI from './pages/FetchFromAPI'
 import AddVideoAlbum from './pages/AddVideoAlbum'
 import AddVideo from './pages/AddVideo'
 import Loading from './components/Loading'
+import AddPodcast from './pages/AddPodcast'
 
 export const url = 'http://localhost:4000'
 
@@ -46,6 +47,8 @@ const ContentWithLoading = () => {
           <Route path="/fetch-from-api" element={<FetchFromAPI />} />
           <Route path="/add-album-video" element={<AddVideoAlbum />} />
           <Route path="/add-video" element={<AddVideo />} />
+          <Route path="/add-podcast" element={<AddPodcast />} />
+
         </Routes>
       </div>
     </>
