@@ -9,7 +9,7 @@ const RecommendedSongs = ({ currentSongId }) => {
   useEffect(() => {
     if (currentSongId) {
       axios
-        .get(`http://localhost:4000/api/recommend/${currentSongId}`)
+        .get(`https://antara-b.onrender.com/api/recommend/${currentSongId}`)
         .then(res => setRecommended(res.data))
         .catch(err => console.error('Recommendation error:', err));
     }
