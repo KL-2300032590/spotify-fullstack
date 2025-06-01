@@ -12,7 +12,7 @@ const PodcastGallery = () => {
 
   const fetchPodcasts = async () => {
     try {
-      const res = await axios.get('http://localhost:4000/api/podcast');
+      const res = await axios.get('https://antara-b.onrender.com/api/podcast');
       setPodcasts(res.data);
     } catch (err) {
       console.error(err);
