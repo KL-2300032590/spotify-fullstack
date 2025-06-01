@@ -3,8 +3,8 @@ import axios from 'axios';
 
 const Visualizer = () => {
   const canvasRef = useRef(null);
+  const audioRef = useRef(null); // Better than useState for audio elements
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioElement, setAudioElement] = useState(null);
   const [settings, setSettings] = useState({});
   const [songs, setSongs] = useState([]);
   const [selectedSong, setSelectedSong] = useState(null);
@@ -21,88 +21,86 @@ const Visualizer = () => {
         console.error("Visualizer settings fetch failed", err);
       }
     };
-
     fetchSettings();
   }, []);
 
-  // Fetch songs from Cloudinary-backed DB
- useEffect(() => {
-  const fetchSongs = async () => {
-    try {
-      const res = await axios.get('http://localhost:4000/api/song/list');
-      if (res.data && Array.isArray(res.data.songs)) {
-        setSongs(res.data.songs); // ✅ this is correct
-      } else {
-        console.error("Invalid response format:", res.data);
-        setSongs([]);
-      }
-    } catch (error) {
-      console.error("Error fetching songs:", error);
-      setSongs([]);
-    }
-  };
-
-  fetchSongs();
-}, []);
-
-  // Setup visualizer when song is selected and playing
+  // Fetch songs
   useEffect(() => {
-    if (!selectedSong) return;
+    const fetchSongs = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/api/song/list');
+        if (Array.isArray(res.data.songs)) {
+          setSongs(res.data.songs);
+        }
+      } catch (err) {
+        console.error("Error fetching songs:", err);
+      }
+    };
+    fetchSongs();
+  }, []);
+
+  // Visualizer logic
+  useEffect(() => {
+    if (!selectedSong || !isPlaying) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-
-    let audioCtx, analyser, source;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioCtx.createAnalyser();
+    let source;
     let animationId;
 
-    const drawBars = () => {
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+    // Proxy workaround (toggle this ON for CORS-safe testing)
+    const PROXY_ENABLED = false;
+    const audioUrl = PROXY_ENABLED
+      ? `http://localhost:4000/api/proxy?url=${encodeURIComponent(selectedSong.file)}`
+      : selectedSong.file;
 
-      const draw = () => {
-        animationId = requestAnimationFrame(draw);
-        analyser.getByteFrequencyData(dataArray);
+    const audio = new Audio();
+    audio.crossOrigin = 'anonymous'; // critical: set BEFORE src
+    audio.src = audioUrl;
+    audioRef.current = audio;
 
-        ctx.fillStyle = settings.bgColor || '#111';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    source = audioCtx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 256;
 
-        const barWidth = (canvas.width / bufferLength) * 2.5;
-        let x = 0;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
 
-        for (let i = 0; i < bufferLength; i++) {
-          const barHeight = dataArray[i];
-          ctx.fillStyle = settings.barColor || `hsl(${barHeight + 200}, 100%, 50%)`;
-          ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-          x += barWidth + 1;
-        }
-      };
+    const draw = () => {
+      animationId = requestAnimationFrame(draw);
+      analyser.getByteFrequencyData(dataArray);
 
-      draw();
+      ctx.fillStyle = settings.bgColor || '#111';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = (canvas.width / bufferLength) * 2.5;
+      let x = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = dataArray[i];
+        ctx.fillStyle = settings.barColor || `hsl(${barHeight + 200}, 100%, 50%)`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+      }
     };
 
-    const playSong = async () => {
-      const audio = new Audio(selectedSong.file); // Cloudinary URL
-      setAudioElement(audio);
-
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = audioCtx.createAnalyser();
-      source = audioCtx.createMediaElementSource(audio);
-      source.connect(analyser);
-      analyser.connect(audioCtx.destination);
-      analyser.fftSize = 256;
-
-      await audio.play();
-      drawBars();
+    const start = async () => {
+      try {
+        await audio.play();
+        draw();
+      } catch (err) {
+        console.error("Playback failed:", err);
+      }
     };
 
-    if (isPlaying) {
-      playSong();
-    }
+    start();
 
     return () => {
       cancelAnimationFrame(animationId);
+      if (audio) audio.pause();
       if (audioCtx) audioCtx.close();
-      if (audioElement) audioElement.pause();
     };
   }, [isPlaying, selectedSong, settings]);
 
@@ -111,13 +109,17 @@ const Visualizer = () => {
       alert('Please select a song!');
       return;
     }
+
+    if (isPlaying && audioRef.current) {
+      audioRef.current.pause();
+    }
+
     setIsPlaying((prev) => !prev);
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 mt-6 text-white bg-gradient-to-br from-black via-gray-900 to-gray-800 rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold mb-6 text-red-500">Visualizer</h2>
-
       <p className="mb-4 text-gray-300">Choose a song to start visualizing:</p>
 
       <select
