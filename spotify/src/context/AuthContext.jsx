@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('http://localhost:4000/api/auth/me', {
+      fetch('https://antara-b.onrender.com/api/auth/me', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const res = await fetch('http://localhost:4000/api/auth/login', {
+    const res = await fetch('https://antara-b.onrender.com/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     const data = await res.json();
     if (data.token) {
       localStorage.setItem('token', data.token);
-      const userRes = await fetch('http://localhost:4000/api/auth/me', {
+      const userRes = await fetch('https://antara-b.onrender.com/api/auth/me', {
         headers: { Authorization: `Bearer ${data.token}` }
       });
       const userData = await userRes.json();
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (email, password) => {
-    const res = await fetch('http://localhost:4000/api/auth/signup', {
+    const res = await fetch('https://antara-b.onrender.com/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
