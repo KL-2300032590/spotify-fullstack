@@ -29,7 +29,7 @@ const UserProfile = () => {
     setSelectedImage(src);
 
     const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:4000/api/auth/profile-image', {
+    const res = await fetch('https://antara-b.onrender.com/api/auth/profile-image', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
