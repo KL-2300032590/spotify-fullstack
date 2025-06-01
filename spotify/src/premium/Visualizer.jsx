@@ -53,7 +53,7 @@ const Visualizer = () => {
     // Proxy workaround (toggle this ON for CORS-safe testing)
     const PROXY_ENABLED = false;
     const audioUrl = PROXY_ENABLED
-      ? `http://localhost:4000/api/proxy?url=${encodeURIComponent(selectedSong.file)}`
+      ? `https://antara-b.onrender.com/api/proxy?url=${encodeURIComponent(selectedSong.file)}`
       : selectedSong.file;
 
     const audio = new Audio();
