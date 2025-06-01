@@ -1,32 +1,73 @@
-# 🎧 Spotify Vibes
+# 🎵 Antara – Full Stack Spotify Clone (Free & Premium Music App)
 
-A sleek web app that interacts with the **Spotify Web API**, built with **React**, **Vite**, and styled using **Tailwind CSS**. Search, play, and vibe to your favorite music — all from your browser.
+**Antara** (अंतरा) is a full-stack music streaming web application, inspired by Spotify — but designed with *freedom, creativity, and accessibility* in mind.  
+The word **Antara** comes from Indian classical music, symbolizing *depth* and *discovery* — just like the musical journeys inside this platform.
 
 ---
 
 ## 🚀 Live Demo
+🔗 [Visit Antara Live](https://antaraa.onrender.com/)  
 
-[Click here to try it out](https://spotify-frontend-f16a.onrender.com)/
+---
+
+## 🔑 Demo Credentials
+
+To explore **Premium User Features**, use the credentials below:
+
+- **Email**: `premiumUser@gmail.com`
+- **Password**: `User!123`
+
+> ✨ Premium users can access offline mode, visualizer themes, LLM playlists, video albums, and more!
+
+
+
+---
+
+## ✨ Features
+
+### 👤 User Experience
+- 🔐 JWT-based User Authentication (Login/Signup)
+- 🧑‍💻 Basic & Premium User Modes
+- 🚫 No ads — even for basic users!
+- 🔥 Offline Music Mode (for premium users)
+- 🖼️ Dynamic Profile Badge System
+- 🎧 Visualizer Themes for immersive listening
+- 🌐 Multilingual & Genre-Based Recommendations (via NLP)
+
+### 🧑‍🏫 Admin Panel
+- Add/Edit/Delete: Songs, Albums, Videos, Podcasts
+- Real-time Content Management
+- Dynamic Metadata Fetching (via iTunes API)
+
+### 🎨 UI/UX
+- Landing animation inspired by Netflix + YouTube
+- Fully responsive design
+- Dynamic Navbars, Tabs, and Premium Zones
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Category      | Tools & Frameworks                          |
-|---------------|---------------------------------------------|
-| 🎨 Frontend   | [React](https://reactjs.org), [Vite](https://vitejs.dev), [Tailwind CSS](https://tailwindcss.com) |
-| 🎵 API        | [Spotify Web API](https://developer.spotify.com/documentation/web-api/) |
-| 🌐 Deployment | [Vercel](https://vercel.com)  |
+### Frontend:
+- **React.js** + **Tailwind CSS**
+- **React Router**, **Context API**
+- **JWT Tokens** for session management
+
+### Backend:
+- **Node.js** + **Express.js**
+- **MongoDB** (Cloud Atlas)
+- **Cloudinary** (for media storage)
+- **Razorpay** (Premium subscriptions)
 
 ---
 
-## 🔑 Features
+## 🧠 Key Learning Challenges
 
-- ✅ Spotify authentication via OAuth
-- 🎵 Fetch and play music from your Spotify account
-- 🔍 Search for tracks, artists, and albums
-- 📈 Display top tracks and playlists
-- 🎨 Responsive, mobile-friendly UI (thanks to Tailwind)
+> While building Antara, I tackled real-world full-stack issues like:
+- 🧵 Race Conditions in audio playback logic
+- 🔄 Syncing state across user sessions
+- ⚙️ Dynamic rendering based on user type
+- 📶 Offline support logic
+- 🧠 NLP for smart recommendations
 
 ---
-
