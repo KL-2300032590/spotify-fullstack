@@ -13,7 +13,7 @@ import paymentRoutes from './src/routes/paymentRoutes.js';
 import authRoutes from './src/routes/authRoutes.js';
 import offlineRoutes from './src/routes/offlineRoutes.js';
 import visualizerRoutes from './src/routes/visualizerRoutes.js';
-
+import podcastRoutes from './src/routes/podcastRoute.js';
 
 
 
@@ -60,6 +60,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/offline', offlineRoutes);
 app.use('/api/visualizer', visualizerRoutes);
 
+
+//podcast
+app.use('/api/podcast', podcastRoutes);
 
 app.get('/', (req,res)=> res.send("API WORKING"))
 

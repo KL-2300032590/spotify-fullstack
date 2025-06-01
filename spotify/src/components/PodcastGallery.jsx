@@ -2,39 +2,27 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './Navbar';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const dummyPodcasts = [
-  {
-    _id: 'p1',
-    title: 'Tech Talks: AI Trends',
-    speakers: 'Alice & Bob',
-    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-  },
-  {
-    _id: 'p2',
-    title: 'The Future of Web3',
-    speakers: 'Satoshi & Vitalik',
-    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-  },
-  {
-    _id: 'p3',
-    title: 'Startup Stories',
-    speakers: 'Elon & Tony',
-    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
-  },
-  {
-    _id: 'p4',
-    title: 'Mental Health & Tech',
-    speakers: 'Sam & Lisa',
-    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-  },
-];
-
 const PodcastGallery = () => {
-  const [podcasts, setPodcasts] = useState(dummyPodcasts);
+  const [podcasts, setPodcasts] = useState([]);
   const [modalPodcast, setModalPodcast] = useState(null);
   const modalRef = useRef();
+
+  const fetchPodcasts = async () => {
+    try {
+      const res = await axios.get('http://localhost:4000/api/podcast');
+      setPodcasts(res.data);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to fetch podcasts');
+    }
+  };
+
+  useEffect(() => {
+    fetchPodcasts();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -49,8 +37,7 @@ const PodcastGallery = () => {
   return (
     <>
       <Navbar />
-      <div className=" min-h-screen bg-[#121212
-] text-white px-4 py-6 transition-all duration-500 ">
+      <div className="min-h-screen bg-[#121212] text-white px-4 py-6 transition-all duration-500">
         <h1 className="my-5 font-bold text-2xl">🎙️ Podcasts</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
