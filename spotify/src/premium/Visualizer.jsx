@@ -28,7 +28,7 @@ const Visualizer = () => {
   useEffect(() => {
     const fetchSongs = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/song/list');
+        const res = await axios.get('https://antara-b.onrender.com/api/song/list');
         if (Array.isArray(res.data.songs)) {
           setSongs(res.data.songs);
         }
