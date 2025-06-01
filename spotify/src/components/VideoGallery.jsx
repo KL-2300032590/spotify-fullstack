@@ -25,7 +25,7 @@ const VideoGallery = () => {
 
   // Fetch albums
   useEffect(() => {
-    axios.get('http://localhost:4000/api/video-album')
+    axios.get('https://antara-b.onrender.com/api/video-album')
       .then(res => setAlbumsData(res.data))
       .catch(() => toast.error('Album loading failed'));
   }, []);
@@ -33,8 +33,8 @@ const VideoGallery = () => {
   // Fetch videos
   useEffect(() => {
     const url = isVideoAlbum
-      ? `http://localhost:4000/api/video/album/${albumId}`
-      : `http://localhost:4000/api/video`;
+      ? `https://antara-b.onrender.com/api/video/album/${albumId}`
+      : `https://antara-b.onrender.com/api/video`;
 
     axios.get(url)
       .then(res => setVideos(res.data))
